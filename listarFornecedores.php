@@ -34,7 +34,7 @@ require_once 'header.php';
     $sql = "SELECT * FROM fornecedores LIMIT $inicio, $total_reg";
     $result = mysqli_query($conn, $sql); //A query seleciona as linhas da Tabela
     $tr = mysqli_num_rows($result); // verifica o número total de registros
-    $tp = $tr / $total_reg + 1; // verifica o número total de páginas
+    $tp = ceil($total_de_registros / $total_reg); // verifica o número total de páginas
 
     if (mysqli_num_rows($result) > 0) {
       echo '<div class="table-responsive">';
@@ -70,8 +70,8 @@ require_once 'header.php';
     ?>
       <nav aria-label="...">
         <ul class="pagination">
-          <li class="page-item" <?php if ($pc == 1) echo "disabled"; ?>><a href='?pagina=<?php echo $anterior ?>' class="page-link">Previous</a></li>
-          <li class="page-item" <?php if ($pc < $tp) echo "disabled"; ?>><a class="page-link" href='?pagina=<?php echo $proximo ?>'>Next</a></li>
+          <li class="page-item"><a href="?pagina=<?php  if ($pc == 1) echo 1; else $anterior ?>" class="page-link">Previous</a></li>
+          <li class="page-item"><a href="?pagina=<?php  if ($pc == $tp) echo $tp; else $proximo ?>" class="page-link">Next</a></li>
         </ul>
       </nav>
     <?php
