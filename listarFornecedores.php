@@ -21,20 +21,21 @@ require_once 'header.php';
     }
     //echo '<br>Conexão ao Banco realizada com Sucesso.';
 
-    $total_reg = "1"; // número de registros por página
-    if (!isset($_GET['pagina'])) {
-      $pc = 1;
-    } else {
-      $pc = $_GET['pagina'];
-    }
+    $total_reg = 1; // <--- AJUSTAR: QUANTOS ITENS POR PÁGINA
 
-    $inicio = $pc - 1;
-    $inicio = $inicio * $total_reg;
+    // 1. Lógica da Página Atual
+    $pc = isset($_GET['pagina']) && is_numeric($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+    $inicio = ($pc - 1) * $total_reg;
+
+    $sql_total = "SELECT COUNT(*) AS total FROM fornecedores";
+    $result_total = mysqli_query($conn, $sql_total);
+    $row_total = mysqli_fetch_assoc($result_total);
+    $tr = $row_total['total']; // número total de registros
+
+    $tp = ceil($tr / $total_reg); // número total de páginas
 
     $sql = "SELECT * FROM fornecedores LIMIT $inicio, $total_reg";
-    $result = mysqli_query($conn, $sql); //A query seleciona as linhas da Tabela
-    $tr = mysqli_num_rows($result); // verifica o número total de registros
-    $tp = ceil($total_de_registros / $total_reg); // verifica o número total de páginas
+    $result = mysqli_query($conn, $sql);
 
     if (mysqli_num_rows($result) > 0) {
       echo '<div class="table-responsive">';
@@ -68,10 +69,19 @@ require_once 'header.php';
       $anterior = $pc - 1;
       $proximo = $pc + 1;
     ?>
-      <nav aria-label="...">
+      <nav aria-label="Navegação de Página">
         <ul class="pagination">
-          <li class="page-item"><a href="?pagina=<?php  if ($pc == 1) echo 1; else $anterior ?>" class="page-link">Previous</a></li>
-          <li class="page-item"><a href="?pagina=<?php  if ($pc == $tp) echo $tp; else $proximo ?>" class="page-link">Next</a></li>
+          <li class="page-item <?php echo ($pc <= 1) ? 'disabled' : ''; ?>">
+            <a href="?pagina=<?php echo ($pc <= 1) ? 1 : $anterior; ?>" class="page-link">Previous</a>
+          </li>
+          <?php for ($i = 1; $i <= $tp; $i++) { ?>
+            <li class="page-item <?php echo ($pc == $i) ? 'active' : ''; ?>">
+              <a href="?pagina=<?php echo $i; ?>" class="page-link"><?php echo $i; ?></a>
+            </li>
+          <?php } ?>
+          <li class="page-item <?php echo ($pc >= $tp) ? 'disabled' : ''; ?>">
+            <a href="?pagina=<?php echo ($pc >= $tp) ? $tp : $proximo; ?>" class="page-link">Next</a>
+          </li>
         </ul>
       </nav>
     <?php
