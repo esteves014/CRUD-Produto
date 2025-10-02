@@ -1,0 +1,30 @@
+create database crudproduto;
+
+use crudproduto;
+
+CREATE TABLE produto (
+   id INT PRIMARY KEY AUTO_INCREMENT,
+   nome VARCHAR(200) NOT NULL,
+   preco DECIMAL(10,2) NOT NULL,
+   quantidade INT NOT NULL,
+   descricao TEXT NULL,
+   dataCadastro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE usuario (
+  login VARCHAR(128) PRIMARY KEY NOT NULL,
+  nome VARCHAR (256) NOT NULL,
+  senha VARCHAR (32) NOT NULL,
+  email VARCHAR (256) NOT NULL,
+  permissao VARCHAR (50) NOT NULL
+);
+
+
+CREATE TABLE fornecedores (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	nome VARCHAR(255) NOT NULL,
+	site VARCHAR(255) NOT NULL,
+	uf VARCHAR(2) NOT NULL,
+	email VARCHAR(255) NOT NULL
+);
